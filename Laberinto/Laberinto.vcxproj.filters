@@ -24,6 +24,9 @@
     <ClInclude Include="targetver.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="ImageLoader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -32,5 +35,28 @@
     <ClCompile Include="Laberinto.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
+    <ClCompile Include="ImageLoader.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="1.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
+    <Image Include="2.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
+    <Image Include="3.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
+    <Image Include="4.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
+    <Image Include="5.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
+    <Image Include="6.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
   </ItemGroup>
 </Project>
