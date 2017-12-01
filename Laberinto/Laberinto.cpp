@@ -29,7 +29,7 @@ GLfloat la7 = 0.0;
 GLfloat la8 = 1.0;
 GLfloat la9 = 0.0;
 
-double rx = 0, ry = 0, rz = 0, pxx, pyy = 0, pz = 0;
+double rx = 10, ry = -20, rz = 15, pxx, pyy = 0, pz = 0;
 
 
 
@@ -249,6 +249,7 @@ void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	gluLookAt(-10 + rx, 9 + ry, -10 + rz, pxx, pyy, pz, 0, 1, 0);
+	//gluLookAt(-10 + rx, 9 + ry, -10 + rz, pxx, pyy, pz, 0, 1, 0);
 	//gluLookAt(0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	glPushMatrix();
 	glTranslatef(xi, yi, -3);
