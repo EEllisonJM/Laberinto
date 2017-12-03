@@ -10,14 +10,13 @@
 #define M_PI 3.14159265358979323846
 using namespace std;
 
+double mouseX, mouseY, oldMouseX, oldMouseY, angle;
 /*Posicion Jugador Inicial*/
 int px = 0;
 int py = 9;
-
 /*glLookAt*/
 double rx = 0.2, ry = 9.5, rz = .5;//Specifies the position of the eye point.
 double pxx = 2.5, pyy = 9.55, pzz = 0.7;//Specifies the position of the reference point.
-
 //Prueba gluLookAt
 GLfloat la1 = 0.0;
 GLfloat la2 = 0.0;
@@ -32,9 +31,7 @@ GLfloat la9 = 0.0;
 GLfloat xi = -8.5;
 GLfloat yi = -8;
 
-
-
-/*Giro*/
+/*Variables para giro en cada eje*/
 GLdouble anguloY = 0;
 GLdouble anguloX = 0;
 GLdouble anguloZ = 0;
@@ -137,7 +134,7 @@ void graficarJugador(int x, int y){
 	glVertex3f(x + 0.2, y + 0.4, 0.4);
 	glEnd();
 
-	//lateral izquierdo0.2
+	//lateral izquierdo
 	glBegin(GL_POLYGON);
 	glColor3f(0, 0, 0);
 	glVertex3f(x + 0.2, y + 0.2, 0.0);
@@ -215,14 +212,18 @@ void graficarMuro(int x, int y){
 	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y + 1, 1.0);
 	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 0.0);
 	glEnd();}
-/*sets the reshape callback for the current window. */
+/*Creacion de la escena*/
 void reshape(int w, int h) {
-	//glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();//Inicializa la matriz de proyeccion
-	gluPerspective(50, (GLfloat)h / (GLfloat)w, .1, 25.0);//(alpha, aspect, near, far)
+	gluPerspective(50, (GLfloat)h / (GLfloat)w, .1, 25.0);//(fovy, aspect, near, far)
 	glMatrixMode(GL_MODELVIEW); // cambiamos la matrix :D
-	glLoadIdentity();}
+	glLoadIdentity();
+	 gluLookAt(0, 10, 0, 0, 2, 5, 0, 1, 0);
+}
+
+
 void moverAdelante(){	
 	yi += 0.5;	
 }
@@ -339,7 +340,7 @@ void ArrowKey(int key, int x, int y) {
 		break;
 	case GLUT_KEY_F9:
 		anguloX -= 5;
-		break;		
+		break;
 	default:
 		break;
 	}
@@ -355,12 +356,14 @@ void display(void) {
 		0, 0, 1);//Orientacion de la camara
 
 	glPushMatrix();
-	//glTranslatef(xi, yi, -3);
+	
 	//glScaled(escala, escala, 1.0);
 	/*multiply the current matrix by a rotation matrix*/
 	glRotated(anguloX, 1.0, 0.0, 0.0);
 	glRotated(anguloY, 0.0, 1.0, 0.0);
 	glRotated(anguloZ, 0.0, 0.0, 1.0);
+	//glTranslatef(xi, yi, -3);
+	//glTranslatef(pxx, pyy, 0);
 
 	mapa[px][py] = 2;
 
@@ -464,7 +467,9 @@ void keyboard(unsigned char key, int x, int y) {
 		rx = rx - 0.2;
 		break;
 	case 'l':
-		pxx = pxx + 0.2;
+		//pxx+=.1;
+		//pxx = sin(pxx);//
+		pxx + 0.2;
 		break;
 	case 'j':
 		pxx = pxx - 0.2;
@@ -525,7 +530,7 @@ int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);/*Inicializar el modo de visualización.*/
-	glutInitWindowSize(650, 650);/*Inicializar el tamaño de la ventana*/
+	glutInitWindowSize(650, 670);/*Inicializar el tamaño de la ventana*/
 	glutInitWindowPosition(340, 5);/*Inicializar la posición    de    la    ventana    en    el    escritorio*/
 	glutCreateWindow("Laberinto");/*Crear ventana con Titulo*/
 	//glClearColor(.5, 1, .2, 0);/*Color de fondo*/
