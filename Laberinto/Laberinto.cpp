@@ -7,12 +7,16 @@
 #include <iostream>
 #include "ImageLoader.h"
 #include <math.h>
-//#define M_PI 3.14159265358979323846
+#define M_PI 3.14159265358979323846
 using namespace std;
 
 /*Posicion Jugador Inicial*/
 int px = 0;
 int py = 9;
+
+/*glLookAt*/
+double rx = 0.2, ry = 9.5, rz = .5;//Specifies the position of the eye point.
+double pxx = 2.5, pyy = 9.55, pzz = 0.7;//Specifies the position of the reference point.
 
 //Prueba gluLookAt
 GLfloat la1 = 0.0;
@@ -28,9 +32,8 @@ GLfloat la9 = 0.0;
 GLfloat xi = -8.5;
 GLfloat yi = -8;
 
-double rx = 0.2, ry = 9.5, rz = .5;//[px,py]=> Posicion Jugador
-double pxx = 30, pyy = 10, pzz = 0;//Giro en x
-//pyy=10 =>mira hacia abajo
+
+
 /*Giro*/
 GLdouble anguloY = 0;
 GLdouble anguloX = 0;
@@ -128,46 +131,46 @@ void graficarJugador(int x, int y){
 	//Frontal Y
 	glBegin(GL_POLYGON);
 	glColor3f(0, 0, 0);
-	glVertex3f(x + 0.2, y + 0.2, 0.8);
-	glVertex3f(x + 0.8, y + 0.2, 0.8);
-	glVertex3f(x + 0.8, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.8);
+	glVertex3f(x + 0.2, y + 0.2, 0.4);
+	glVertex3f(x + 0.4, y + 0.2, 0.4);
+	glVertex3f(x + 0.4, y + 0.4, 0.4);
+	glVertex3f(x + 0.2, y + 0.4, 0.4);
 	glEnd();
 
 	//lateral izquierdo0.2
 	glBegin(GL_POLYGON);
 	glColor3f(0, 0, 0);
 	glVertex3f(x + 0.2, y + 0.2, 0.0);
-	glVertex3f(x + 0.2, y + 0.2, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.0);
+	glVertex3f(x + 0.2, y + 0.2, 0.4);
+	glVertex3f(x + 0.2, y + 0.4, 0.4);
+	glVertex3f(x + 0.2, y + 0.4, 0.0);
 	glEnd();
 
 	//Lateral derecha
 	glBegin(GL_POLYGON);
 	glColor3f(0, 0, 0);
-	glVertex3f(x + 0.8, y + 0.2, 0.0);
-	glVertex3f(x + 0.8, y + 0.2, 0.8);
-	glVertex3f(x + 0.8, y + 0.8, 0.8);
-	glVertex3f(x + 0.8, y + 0.8, 0.0);
+	glVertex3f(x + 0.4, y + 0.2, 0.0);
+	glVertex3f(x + 0.4, y + 0.2, 0.4);
+	glVertex3f(x + 0.4, y + 0.4, 0.4);
+	glVertex3f(x + 0.4, y + 0.4, 0.0);
 	glEnd();
 
 	//Lateral abajo y
 	glBegin(GL_POLYGON);
 	glColor3f(0.4, 0.4, 1);
-	glVertex3f(x + 0.8, y + 0.2, 0.0);
-	glVertex3f(x + 0.8, y + 0.2, 0.8);
-	glVertex3f(x + 0.2, y + 0.2, 0.8);
+	glVertex3f(x + 0.4, y + 0.2, 0.0);
+	glVertex3f(x + 0.4, y + 0.2, 0.4);
+	glVertex3f(x + 0.2, y + 0.2, 0.4);
 	glVertex3f(x + 0.2, y + 0.2, 0.0);
 	glEnd();
 
 	//Lateral Arriba y
 	glBegin(GL_POLYGON);
 	glColor3f(0.4, 0.4, 1);
-	glVertex3f(x + 0.8, y + 0.8, 0.0);
-	glVertex3f(x + 0.8, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.0);
+	glVertex3f(x + 0.4, y + 0.4, 0.0);
+	glVertex3f(x + 0.4, y + 0.4, 0.4);
+	glVertex3f(x + 0.2, y + 0.4, 0.4);
+	glVertex3f(x + 0.2, y + 0.4, 0.0);
 	glEnd();}
 /*Graficar el muro*/
 void graficarMuro(int x, int y){
@@ -217,8 +220,7 @@ void reshape(int w, int h) {
 	//glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();//Inicializa la matriz de proyeccion
-	gluPerspective(70, (GLfloat)h / (GLfloat)w, 1, 300);
-	//glOrtho(-10.0, 10.0, -10.00, 10.0, 0.1, 20.0); // WorkSpace
+	gluPerspective(50, (GLfloat)h / (GLfloat)w, .1, 25.0);//(alpha, aspect, near, far)
 	glMatrixMode(GL_MODELVIEW); // cambiamos la matrix :D
 	glLoadIdentity();}
 void moverAdelante(){	
@@ -228,10 +230,10 @@ void moverAtras(){
 	yi -= 0.5;
 }
 void girarIzquierda(){
-	pyy+=.7;
+	pyy+=.3;
 }
 void girarDerecha(){
-	pyy-=.7;
+	pyy-=.3;
 }
 /*Movimientos del  [Jugador] con las teclas de direccion*/
 void ArrowKey(int key, int x, int y) {
@@ -348,9 +350,9 @@ void display(void) {
 	glLoadIdentity();
 	
 	gluLookAt(//Transgraficar una vista
-		rx, ry, rz,//Specifies the position of the eye point.                
-		pxx/*Giro en eje X*/, pyy, pzz,//Specifies the position of the reference point.                
-		0, 0, 1);//Specifies the direction of the up vector.
+		rx, ry, rz,//Posicion de la camara
+		pxx, pyy, pzz,//[Lo que queremos ver]
+		0, 0, 1);//Orientacion de la camara
 
 	glPushMatrix();
 	//glTranslatef(xi, yi, -3);
@@ -522,18 +524,20 @@ void keyboard(unsigned char key, int x, int y) {
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowSize(650, 650);
-	glutInitWindowPosition(10, 10);
-	glutCreateWindow("Laberinto");
-	glEnable(GL_DEPTH_TEST);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);/*Inicializar el modo de visualización.*/
+	glutInitWindowSize(650, 650);/*Inicializar el tamaño de la ventana*/
+	glutInitWindowPosition(340, 5);/*Inicializar la posición    de    la    ventana    en    el    escritorio*/
+	glutCreateWindow("Laberinto");/*Crear ventana con Titulo*/
+	//glClearColor(.5, 1, .2, 0);/*Color de fondo*/
+	glEnable(GL_DEPTH_TEST);/*Activar el test del buffer de profundidad: */
+
 	init();
 	initRendering();
-	glutDisplayFunc(display);
+	glutDisplayFunc(display);/* Definir el callback para redibujar la ventana.*/
 	glutReshapeFunc(reshape);
 	glutIdleFunc(display);
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(ArrowKey);
-	glutMainLoop();
+	glutMainLoop();/* bucle de eventos */
 	return 0;
 }
