@@ -1,6 +1,5 @@
 // Laberinto.cpp: define el punto de entrada de la aplicación de consola.
 //
-
 #include "stdafx.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,7 +17,6 @@ int py = 9;
 
 
 //Prueba gluLookAt
-
 GLfloat la1 = 0.0;
 GLfloat la2 = 0.0;
 GLfloat la3 = 0.5;
@@ -29,12 +27,8 @@ GLfloat la7 = 0.0;
 GLfloat la8 = 1.0;
 GLfloat la9 = 0.0;
 
-double rx = 10, ry = -20, rz = 15, pxx, pyy = 0, pz = 0;
-
-
-
+double rx = 10, ry = -16.8, rz = 7.6, pxx, pyy = 0, pz = -3.6;
 /////////////////////////
-
 GLint escala = 1;
 
 GLdouble anguloY = 0;
@@ -51,8 +45,7 @@ GLuint _text4;
 GLuint _text5;
 GLuint _text6;
 
-
-
+/*Cargar imagen de textura a usar*/
 GLuint loadTexture(Image* image) {
 	GLuint idtextura;
 	glGenTextures(1, &idtextura);
@@ -60,42 +53,40 @@ GLuint loadTexture(Image* image) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
 	return idtextura;
 }
-
-
+/*Inicializar renderizado [Generar una imagen desde un modelo]*/
 void initRendering() {
 	Image* lado1 = loadBMP("1.bmp");
 	_text1 = loadTexture(lado1);
 	delete lado1;
-
 	Image* lado2 = loadBMP("2.bmp");
 	_text2 = loadTexture(lado2);
 	delete lado2;
-
 	Image* lado3 = loadBMP("3.bmp");
 	_text3 = loadTexture(lado3);
 	delete lado3;
-
 	Image* lado4 = loadBMP("4.bmp");
 	_text4 = loadTexture(lado4);
 	delete lado4;
-
 	Image* lado5 = loadBMP("5.bmp");
 	_text5 = loadTexture(lado5);
 	delete lado5;
-
 	Image* lado6 = loadBMP("6.bmp");
 	_text6 = loadTexture(lado6);
 	delete lado6;
 }
-
+/*Cargar textura*/
 void cargarTextura(GLuint _textura) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textura);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
-
-//Matriz
+/* Diseño del laberinto [mapa].
+0 => Camino
+1 => Pared
+3 => Entrada
+4 => Salida
+*/
 int mapa[17][22] = {
 	{ 1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1 },
 	{ 1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1 },
@@ -113,11 +104,11 @@ int mapa[17][22] = {
 	{ 1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1 },
 	{ 1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1 },
 	{ 1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1 },
-	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,1 } };
-
-
+	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,1 } 
+};
+/*Makes 3D drawing work when something is in front of something else*/
 void init(void) {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	//glClearColor(0.0, 0.0, 0.0, 0.0);
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -232,18 +223,13 @@ void ArrowKey(int key, int x, int y) {
 	case GLUT_KEY_F9:
 		anguloX -= 5;
 		break;
-
-
-
-
+		
 	default:
 		break;
 	}
 
 	glutPostRedisplay();
 }
-
-
 
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
