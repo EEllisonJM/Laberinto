@@ -7,14 +7,12 @@
 #include <iostream>
 #include "ImageLoader.h"
 #include <math.h>
-#define M_PI 3.14159265358979323846
+//#define M_PI 3.14159265358979323846
 using namespace std;
 
-GLfloat xi = -8.5;
-GLfloat yi = -8;
+/*Posicion Jugador Inicial*/
 int px = 0;
 int py = 9;
-
 
 //Prueba gluLookAt
 GLfloat la1 = 0.0;
@@ -27,23 +25,29 @@ GLfloat la7 = 0.0;
 GLfloat la8 = 1.0;
 GLfloat la9 = 0.0;
 
-double rx = 10, ry = -16.8, rz = 7.6, pxx, pyy = 0, pz = -3.6;
-/////////////////////////
-GLint escala = 1;
+GLfloat xi = -8.5;
+GLfloat yi = -8;
 
+double rx = 0.2, ry = 9.5, rz = .5;//[px,py]=> Posicion Jugador
+double pxx = 30, pyy = 10, pzz = 0;//Giro en x
+//pyy=10 =>mira hacia abajo
+/*Giro*/
 GLdouble anguloY = 0;
 GLdouble anguloX = 0;
 GLdouble anguloZ = 0;
 
-void muro(int x, int y);
-void mono(int x, int y);
-
+GLint escala = 1;
+/*Texturas*/
 GLuint _text1;
 GLuint _text2;
 GLuint _text3;
 GLuint _text4;
 GLuint _text5;
 GLuint _text6;
+
+/*Métodos*/
+void graficarMuro(int x, int y);
+void graficarJugador(int x, int y);
 
 /*Cargar imagen de textura a usar*/
 GLuint loadTexture(Image* image) {
@@ -82,13 +86,13 @@ void cargarTextura(GLuint _textura) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 /* Diseño del laberinto [mapa].
-0 => Camino
-1 => Pared
+0 => Camino[Abarca todo el espacio del laberinto]
+1 => Muro
 3 => Entrada
 4 => Salida
 */
 int mapa[17][22] = {
-	{ 1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1 },
+	{ 1,1,1,1,1,1,1,1,1,3/*(0,9)*/,1,1,1,1,1,1,1 },
 	{ 1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1 },
 	{ 1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1 },
 	{ 1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1 },
@@ -104,22 +108,139 @@ int mapa[17][22] = {
 	{ 1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1 },
 	{ 1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1 },
 	{ 1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1 },
-	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,1 } 
-};
+	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,1 } };
 /*Makes 3D drawing work when something is in front of something else*/
 void init(void) {
 	//glClearColor(0.0, 0.0, 0.0, 0.0);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);}
+/*Suelo[Todo el espacio del laberinto] - Pasto*/
+void graficarSuelo(){	
+	cargarTextura(_text1);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0, 0.0);		glVertex3f(0, 0, 0);
+	glTexCoord2f(1, 0.0);		glVertex3f(0, 17, 0);
+	glTexCoord2f(1.0, 1.0);		glVertex3f(17, 17, 0);
+	glTexCoord2f(0.0, 1.0);		glVertex3f(17, 0, 0);
+	glEnd();
 }
+/*Graficar al jugador*/
+void graficarJugador(int x, int y){
+	//Frontal Y
+	glBegin(GL_POLYGON);
+	glColor3f(0, 0, 0);
+	glVertex3f(x + 0.2, y + 0.2, 0.8);
+	glVertex3f(x + 0.8, y + 0.2, 0.8);
+	glVertex3f(x + 0.8, y + 0.8, 0.8);
+	glVertex3f(x + 0.2, y + 0.8, 0.8);
+	glEnd();
 
+	//lateral izquierdo0.2
+	glBegin(GL_POLYGON);
+	glColor3f(0, 0, 0);
+	glVertex3f(x + 0.2, y + 0.2, 0.0);
+	glVertex3f(x + 0.2, y + 0.2, 0.8);
+	glVertex3f(x + 0.2, y + 0.8, 0.8);
+	glVertex3f(x + 0.2, y + 0.8, 0.0);
+	glEnd();
 
+	//Lateral derecha
+	glBegin(GL_POLYGON);
+	glColor3f(0, 0, 0);
+	glVertex3f(x + 0.8, y + 0.2, 0.0);
+	glVertex3f(x + 0.8, y + 0.2, 0.8);
+	glVertex3f(x + 0.8, y + 0.8, 0.8);
+	glVertex3f(x + 0.8, y + 0.8, 0.0);
+	glEnd();
+
+	//Lateral abajo y
+	glBegin(GL_POLYGON);
+	glColor3f(0.4, 0.4, 1);
+	glVertex3f(x + 0.8, y + 0.2, 0.0);
+	glVertex3f(x + 0.8, y + 0.2, 0.8);
+	glVertex3f(x + 0.2, y + 0.2, 0.8);
+	glVertex3f(x + 0.2, y + 0.2, 0.0);
+	glEnd();
+
+	//Lateral Arriba y
+	glBegin(GL_POLYGON);
+	glColor3f(0.4, 0.4, 1);
+	glVertex3f(x + 0.8, y + 0.8, 0.0);
+	glVertex3f(x + 0.8, y + 0.8, 0.8);
+	glVertex3f(x + 0.2, y + 0.8, 0.8);
+	glVertex3f(x + 0.2, y + 0.8, 0.0);
+	glEnd();}
+/*Graficar el muro*/
+void graficarMuro(int x, int y){
+	//Lateral Abajo y [Techo]
+	cargarTextura(_text6);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0, 0.0);		glVertex3f(x, y, 1);
+	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y, 1);
+	glTexCoord2f(1.0, 1.0);		glVertex3f(x + 1, y + 1, 1);
+	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 1);
+	glEnd();
+	//Lateral izquierdo
+	cargarTextura(_text3);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0, 0.0);		glVertex3f(x, y, 0.0);
+	glTexCoord2f(1.0, 0.0);		glVertex3f(x, y, 1.0);
+	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y + 1, 1.0);
+	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 0.0);
+	glEnd();
+	//Lateral derecho
+	cargarTextura(_text3);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y, 0.0);
+	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y, 1.0);
+	glTexCoord2f(1.0, 1.0);		glVertex3f(x + 1, y + 1, 1.0);
+	glTexCoord2f(0.0, 1.0);		glVertex3f(x + 1, y + 1, 0.0);
+	glEnd();
+	//Lateral abajo y
+	cargarTextura(_text3);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y, 0.0);
+	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y, 1.0);
+	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y, 1.0);
+	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y, 0.0);
+	glEnd();
+
+	//Lateral Arriba y [Azotea]
+	cargarTextura(_text3);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y + 1, 0.0);
+	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y + 1, 1.0);
+	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y + 1, 1.0);
+	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 0.0);
+	glEnd();}
+/*sets the reshape callback for the current window. */
+void reshape(int w, int h) {
+	//glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();//Inicializa la matriz de proyeccion
+	gluPerspective(70, (GLfloat)h / (GLfloat)w, 1, 300);
+	//glOrtho(-10.0, 10.0, -10.00, 10.0, 0.1, 20.0); // WorkSpace
+	glMatrixMode(GL_MODELVIEW); // cambiamos la matrix :D
+	glLoadIdentity();}
+void moverAdelante(){	
+	yi += 0.5;	
+}
+void moverAtras(){	
+	yi -= 0.5;
+}
+void girarIzquierda(){
+	pyy+=.7;
+}
+void girarDerecha(){
+	pyy-=.7;
+}
+/*Movimientos del  [Jugador] con las teclas de direccion*/
 void ArrowKey(int key, int x, int y) {
 	switch (key)
 	{
-	case GLUT_KEY_RIGHT:
+/* =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  = */
+	case GLUT_KEY_RIGHT://Derecha
 		if (px<16)
 		{
-
 			if (mapa[px + 1][py] == 0)
 			{
 				mapa[px][py] = 0;
@@ -132,17 +253,14 @@ void ArrowKey(int key, int x, int y) {
 				mapa[px + 1][py] = 2;
 				px = px + 1;
 			}
-
 		}
 		if (px == 16)
 		{
 			px = px;
 			py = py;
 		}
-
 		break;
-
-	case GLUT_KEY_LEFT:
+	case GLUT_KEY_LEFT://Izquierda
 		if (px>0)
 		{
 			if (mapa[px - 1][py] == 0)
@@ -157,10 +275,8 @@ void ArrowKey(int key, int x, int y) {
 			px = px;
 			py = py;
 		}
-
 		break;
-
-	case GLUT_KEY_UP:
+	case GLUT_KEY_UP://Arriba
 		if (mapa[px][py + 1] == 0)
 		{
 			mapa[px][py] = 0;
@@ -169,7 +285,7 @@ void ArrowKey(int key, int x, int y) {
 		}
 		break;
 
-	case GLUT_KEY_DOWN:
+	case GLUT_KEY_DOWN://Abajo
 		if (mapa[px][py - 1] == 0)
 		{
 			mapa[px][py] = 0;
@@ -185,21 +301,20 @@ void ArrowKey(int key, int x, int y) {
 		if (yi < 10)
 			yi += 0.5;
 		break;
-
+/* =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  = */
 	case GLUT_KEY_PAGE_DOWN:
 		if (yi > -10)
 			yi -= 0.5;
 		break;
-
 	case GLUT_KEY_END:
 		if (xi < 10)
 			xi += 0.5;
 		break;
 	case GLUT_KEY_F2:
-		anguloZ += 5;
+		anguloZ += 2;
 		break;
 	case GLUT_KEY_F3:
-		anguloZ -= 5;
+		anguloZ -= 2;
 		break;
 	case GLUT_KEY_F4:
 		anguloY += 5;
@@ -222,52 +337,44 @@ void ArrowKey(int key, int x, int y) {
 		break;
 	case GLUT_KEY_F9:
 		anguloX -= 5;
-		break;
-		
+		break;		
 	default:
 		break;
 	}
-
 	glutPostRedisplay();
 }
-
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(-10 + rx, 9 + ry, -10 + rz, pxx, pyy, pz, 0, 1, 0);
-	//gluLookAt(-10 + rx, 9 + ry, -10 + rz, pxx, pyy, pz, 0, 1, 0);
-	//gluLookAt(0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	glPushMatrix();
-	glTranslatef(xi, yi, -3);
-	glScaled(escala, escala, 1.0);
-	//gluPerspective(40.0, 1.0, 1.0, 30.0);
+	
+	gluLookAt(//Transgraficar una vista
+		rx, ry, rz,//Specifies the position of the eye point.                
+		pxx/*Giro en eje X*/, pyy, pzz,//Specifies the position of the reference point.                
+		0, 0, 1);//Specifies the direction of the up vector.
 
+	glPushMatrix();
+	//glTranslatef(xi, yi, -3);
+	//glScaled(escala, escala, 1.0);
+	/*multiply the current matrix by a rotation matrix*/
 	glRotated(anguloX, 1.0, 0.0, 0.0);
 	glRotated(anguloY, 0.0, 1.0, 0.0);
 	glRotated(anguloZ, 0.0, 0.0, 1.0);
 
 	mapa[px][py] = 2;
 
-	//Suelo
-	cargarTextura(_text1);
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0, 0.0);		glVertex3f(0, 0, 0);
-	glTexCoord2f(1, 0.0);		glVertex3f(0, 17, 0);
-	glTexCoord2f(1.0, 1.0);		glVertex3f(17, 17, 0);
-	glTexCoord2f(0.0, 1.0);		glVertex3f(17, 0, 0);
-	glEnd();
+	graficarSuelo();//Pasto
 
 	for (int i = 0; i<17; i++)
 	{
 		for (int j = 0; j<22; j++)
 		{
 			if (mapa[i][j] == 1)
-			{
-				muro(i, j);
+			{//1 => Muro
+				graficarMuro(i, j);//(x,y)
 			}
 			if (mapa[i][j] == 2)
 			{
-				mono(i, j);
+				graficarJugador(i, j);
 			}
 		}
 	}
@@ -276,112 +383,6 @@ void display(void) {
 	glutSwapBuffers();
 }
 
-void mono(int x, int y)
-{
-	//Frontal Y
-	glBegin(GL_POLYGON);
-	glColor3f(0, 0, 0);
-	glVertex3f(x + 0.2, y + 0.2, 0.8);
-	glVertex3f(x + 0.8, y + 0.2, 0.8);
-	glVertex3f(x + 0.8, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.8);
-	glEnd();
-
-	//lateral izquierdo
-	glBegin(GL_POLYGON);
-	glColor3f(0, 0, 0);
-	glVertex3f(x + 0.2, y + 0.2, 0.0);
-	glVertex3f(x + 0.2, y + 0.2, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.0);
-	glEnd();
-
-	//Lateral derecha
-	glBegin(GL_POLYGON);
-	glColor3f(0, 0, 0);
-	glVertex3f(x + 0.8, y + 0.2, 0.0);
-	glVertex3f(x + 0.8, y + 0.2, 0.8);
-	glVertex3f(x + 0.8, y + 0.8, 0.8);
-	glVertex3f(x + 0.8, y + 0.8, 0.0);
-	glEnd();
-
-	//Lateral abajo y
-	glBegin(GL_POLYGON);
-	glColor3f(0.4, 0.4, 1);
-	glVertex3f(x + 0.8, y + 0.2, 0.0);
-	glVertex3f(x + 0.8, y + 0.2, 0.8);
-	glVertex3f(x + 0.2, y + 0.2, 0.8);
-	glVertex3f(x + 0.2, y + 0.2, 0.0);
-	glEnd();
-
-	//Lateral Arriba y
-	glBegin(GL_POLYGON);
-	glColor3f(0.4, 0.4, 1);
-	glVertex3f(x + 0.8, y + 0.8, 0.0);
-	glVertex3f(x + 0.8, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.8);
-	glVertex3f(x + 0.2, y + 0.8, 0.0);
-	glEnd();
-}
-void muro(int x, int y)
-{
-	//Frontal Y
-	cargarTextura(_text6);
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0, 0.0);		glVertex3f(x, y, 1);
-	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y, 1);
-	glTexCoord2f(1.0, 1.0);		glVertex3f(x + 1, y + 1, 1);
-	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 1);
-	glEnd();
-
-	//lateral izquierdo
-	cargarTextura(_text3);
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0, 0.0);		glVertex3f(x, y, 0.0);
-	glTexCoord2f(1.0, 0.0);		glVertex3f(x, y, 1.0);
-	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y + 1, 1.0);
-	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 0.0);
-	glEnd();
-
-	//Lateral derecha
-	cargarTextura(_text3);
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y, 0.0);
-	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y, 1.0);
-	glTexCoord2f(1.0, 1.0);		glVertex3f(x + 1, y + 1, 1.0);
-	glTexCoord2f(0.0, 1.0);		glVertex3f(x + 1, y + 1, 0.0);
-	glEnd();
-
-	//Lateral abajo y
-	cargarTextura(_text3);
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y, 0.0);
-	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y, 1.0);
-	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y, 1.0);
-	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y, 0.0);
-	glEnd();
-
-	//Lateral Arriba y
-	cargarTextura(_text3);
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y + 1, 0.0);
-	glTexCoord2f(1.0, 0.0);		glVertex3f(x + 1, y + 1, 1.0);
-	glTexCoord2f(1.0, 1.0);		glVertex3f(x, y + 1, 1.0);
-	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y + 1, 0.0);
-	glEnd();
-
-
-}
-
-void reshape(int w, int h) {
-	//glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();//Inicializa la matriz de proyeccion
-	gluPerspective(70, (GLfloat)h / (GLfloat)w, 1, 300);
-	//glOrtho(-10.0, 10.0, -10.00, 10.0, 0.1, 20.0); // WorkSpace
-	glMatrixMode(GL_MODELVIEW); // cambiamos la matrix :D
-	glLoadIdentity();
-}
 void keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
@@ -477,8 +478,31 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 	case 'o':
 		pyy = pyy - 0.2;
+		break;	
+	case 'w':
+		rz = rz + 0.2;
 		break;
-
+	case 's':
+		rz = rz - 0.2;
+		break;
+	case 'i':
+		pzz = pzz + 0.8;
+		break;
+	case 'k':
+		pzz = pzz - 0.8;
+		break;
+	case 'z':
+		girarIzquierda();
+		break;
+	case 'x':
+		girarDerecha();
+		break;
+	case 'n':
+		moverAdelante();
+		break;
+	case 'm':
+		moverAtras();
+		break;
 	case 49:
 		ry = ry + 0.2;
 		pyy = pyy + 0.2;
@@ -487,24 +511,13 @@ void keyboard(unsigned char key, int x, int y) {
 		ry = ry - 0.2;
 		pyy = pyy - 0.2;
 		break;
-	case 'w':
-		rz = rz + 0.2;
-		break;
-	case 's':
-		rz = rz - 0.2;
-		break;
-	case 'i':
-		pz = pz + 0.8;
-		break;
-	case 'k':
-		pz = pz - 0.8;
-		break;
-
 
 	}
-
+	/*Girar Izquierda => tecla z
+	Girar Derecha => tecla x
+	moverAdelante => n
+	moverAtras => m*/
 }
-
 
 int main(int argc, char** argv)
 {
