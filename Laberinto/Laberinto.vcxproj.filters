@@ -58,5 +58,11 @@
     <Image Include="6.bmp">
       <Filter>Archivos de código fuente</Filter>
     </Image>
+    <Image Include="pared.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
+    <Image Include="piso.bmp">
+      <Filter>Archivos de código fuente</Filter>
+    </Image>
   </ItemGroup>
 </Project>
