@@ -88,12 +88,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Erik\Desktop\Glew and Glut\glew-1.11.0\include;C:\Users\Erik\Desktop\Glew and Glut\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Erik\Documents\Visual Studio 2015\Projects\Laberinto\Glew and Glut\glew-1.11.0\include;C:\Users\Erik\Documents\Visual Studio 2015\Projects\Laberinto\Glew and Glut\freeglut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Erik\Desktop\Glew and Glut\glew-1.11.0\lib;C:\Users\Erik\Desktop\Glew and Glut\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Erik\Documents\Visual Studio 2015\Projects\Laberinto\Glew and Glut\glew-1.11.0\lib;C:\Users\Erik\Documents\Visual Studio 2015\Projects\Laberinto\Glew and Glut\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

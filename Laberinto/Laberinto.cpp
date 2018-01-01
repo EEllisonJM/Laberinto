@@ -1,15 +1,12 @@
-#include "stdafx.h"
-#include <stdlib.h>
-#include <stdio.h>
+ï»¿#include "stdafx.h"
 #include <GL/glut.h>
-#include <iostream>
 #include "ImageLoader.h"
 #include <math.h>
 #define M_PI 3.14159265358979323846
 using namespace std;
 //-------------
-GLfloat auxX,ax= 0.5;
-GLfloat auxY,az = 9.5;
+GLfloat auxX, ax = 0.5;
+GLfloat auxY, ay = 9.5;
 //----------------
 double mouseX, mouseY, oldMouseX, oldMouseY, angle;
 /*Posicion Jugador Inicial*/
@@ -18,25 +15,7 @@ int py = 9;
 /*glLookAt*/
 double rx = 1.5, ry = 9.5, rz = .7;//Specifies the position of the eye point.
 double pxx = 2.5, pyy = 9.55, pzz = 0.7;//Specifies the position of the reference point.
-GLfloat av = 0;										//Prueba gluLookAt
-GLfloat la1 = 0.0;
-GLfloat la2 = 0.0;
-GLfloat la3 = 0.5;
-GLfloat la4 = 0.0;
-GLfloat la5 = 0.0;
-GLfloat la6 = 0.0;
-GLfloat la7 = 0.0;
-GLfloat la8 = 1.0;
-GLfloat la9 = 0.0;
-
-GLfloat xi = -8.5;
-GLfloat yi = -8;
-
-/*Variables para giro en cada eje*/
-GLdouble anguloY = 0;
-GLdouble anguloX = 0;
-GLdouble anguloZ = 0;
-
+GLfloat av = 0;
 GLint escala = 1;
 /*Texturas*/
 GLuint _text1;
@@ -46,7 +25,7 @@ GLuint _text4;
 GLuint _text5;
 GLuint _text6;
 
-/*Métodos*/
+/*MÃ©todos*/
 void graficarMuro(int x, int y);
 void graficarJugador(int x, int y);
 
@@ -86,7 +65,7 @@ void cargarTextura(GLuint _textura) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
-/* Diseño del laberinto [mapa].
+/* DiseÃ±o del laberinto [mapa].
 0 => Camino[Abarca todo el espacio del laberinto]
 1 => Muro
 3 => Entrada
@@ -207,7 +186,7 @@ void graficarMuro(int x, int y) {
 	glTexCoord2f(0.0, 1.0);		glVertex3f(x, y, 0.0);
 	glEnd();
 
-	//Lateral Arriba y [Azotea]
+	//Lateral Arriba y [Ayotea]
 	cargarTextura(_text3);
 	glBegin(GL_POLYGON);
 	glTexCoord2f(0.0, 0.0);		glVertex3f(x + 1, y + 1, 0.0);
@@ -226,123 +205,11 @@ void reshape(int w, int h) {
 	glLoadIdentity();
 	//gluLookAt(0, 10, 0, 0, 2, 5, 0, 1, 0);
 }
-
-void moverAdelante() {
-	yi += 0.5;
-}
-void moverAtras() {
-	yi -= 0.5;
-}
-void girarIzquierda() {
-	pyy += .3;
-}
-void girarDerecha() {
-	pyy -= .3;
-}
 /*Movimientos del  [Jugador] con las teclas de direccion*/
 void ArrowKey(int key, int x, int y) {
 	switch (key)
 	{
-		/* =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  = */
 	case GLUT_KEY_RIGHT://Derecha
-		if (px<16)
-		{
-			if (mapa[px + 1][py] == 0)
-			{
-				mapa[px][py] = 0;
-				mapa[px + 1][py] = 2;
-				px = px + 1;
-			}
-			if (mapa[px + 1][py] == 4)
-			{
-				mapa[px][py] = 0;
-				mapa[px + 1][py] = 2;
-				px = px + 1;
-			}
-		}
-		if (px == 16)
-		{
-			px = px;
-			py = py;
-		}
-		break;
-	case GLUT_KEY_LEFT://Izquierda
-		if (px>0)
-		{
-			if (mapa[px - 1][py] == 0)
-			{
-				mapa[px][py] = 0;
-				mapa[px - 1][py] = 2;
-				px = px - 1;
-			}
-		}
-		if (px == 0)
-		{
-			px = px;
-			py = py;
-		}
-		break;
-	case GLUT_KEY_UP://Arriba
-		if (mapa[px][py + 1] == 0)
-		{
-			mapa[px][py] = 0;
-			mapa[px][py + 1] = 2;
-			py = py + 1;
-		}
-		break;
-
-	case GLUT_KEY_DOWN://Abajo
-		if (mapa[px][py - 1] == 0)
-		{
-			mapa[px][py] = 0;
-			mapa[px][py - 1] = 2;
-			py = py - 1;
-		}
-		break;
-	case GLUT_KEY_HOME:
-		if (xi > -10)
-			xi -= 0.5;
-		break;
-	case GLUT_KEY_PAGE_UP:
-		if (yi < 10)
-			yi += 0.5;
-		break;
-		/* =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  = */
-	case GLUT_KEY_PAGE_DOWN:
-		if (yi > -10)
-			yi -= 0.5;
-		break;
-	case GLUT_KEY_END:
-		if (xi < 10)
-			xi += 0.5;
-		break;
-	case GLUT_KEY_F2:
-		anguloZ += 2;
-		break;
-	case GLUT_KEY_F3:
-		anguloZ -= 2;
-		break;
-	case GLUT_KEY_F4:
-		anguloY += 5;
-		break;
-	case GLUT_KEY_F5:
-		anguloY -= 5;
-		break;
-	case GLUT_KEY_F6:
-		if (escala <= 2)
-			escala = 2;
-		escala = escala - 1;
-		break;
-	case GLUT_KEY_F7:
-		if (escala > 5)
-			escala = 5;
-		escala = escala + 1;
-		break;
-	case GLUT_KEY_F8:
-		anguloX += 5;
-		break;
-	case GLUT_KEY_F9:
-		anguloX -= 5;
 		break;
 	default:
 		break;
@@ -363,9 +230,9 @@ void display(void) {
 	glTranslatef(auxX, auxY, 0);
 	glScaled(escala, escala, 1.0);
 
-	glRotated(anguloX, 1.0, 0.0, 0.0);
+	/*glRotated(anguloX, 1.0, 0.0, 0.0);
 	glRotated(anguloY, 0.0, 1.0, 0.0);
-	glRotated(anguloZ, 0.0, 0.0, 1.0);
+	glRotated(anguloZ, 0.0, 0.0, 1.0);*/
 	//--------------
 	mapa[px][py] = 2;
 
@@ -399,19 +266,19 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 	case 'x'://Adelante
 		ax = rx + .3 * sin(av);
-		az = ry - .3 * cos(av);
+		ay = ry - .3 * cos(av);
 		aux = (int)ax;
-		aux2 = (int)az;
-		if (mapa[aux][aux2]==0) {
+		aux2 = (int)ay;
+		if (mapa[aux][aux2] == 0) {
 			rx = ax;
-			ry = az;
+			ry = ay;
 			/*Objeto a Mirar*/
 			pxx = rx + .3 * sin(av);
 			pyy = ry - .3 * cos(av);
-		}			
+		}
 		break;
 	case 'n'://Izquierda
-		/*Mover objeto a Mirar*/
+			 /*Mover objeto a Mirar*/
 		av = av + (M_PI / 36);
 		pxx = rx + .3 * sin(av);
 		pyy = ry - .3 * cos(av);
@@ -426,9 +293,9 @@ void keyboard(unsigned char key, int x, int y) {
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);/*Inicializar el modo de visualización.*/
-	glutInitWindowSize(650, 670);/*Inicializar el tamaño de la ventana*/
-	glutInitWindowPosition(340, 5);/*Inicializar la posición    de    la    ventana    en    el    escritorio*/
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);/*Inicializar el modo de visualizaciÃ³n.*/
+	glutInitWindowSize(650, 670);/*Inicializar el tamaÃ±o de la ventana*/
+	glutInitWindowPosition(340, 5);/*Inicializar la posiciÃ³n    de    la    ventana    en    el    escritorio*/
 	glutCreateWindow("Laberinto");/*Crear ventana con Titulo*/
 								  //glClearColor(.5, 1, .2, 0);/*Color de fondo*/
 	glEnable(GL_DEPTH_TEST);/*Activar el test del buffer de profundidad: */
